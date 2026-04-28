@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: atelier-formal-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-proyecto2_bd}
+      POSTGRES_USER: ${POSTGRES_USER:-proy2}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    ports:
+      - "${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - atelier_formal_data:/var/lib/postgresql/data
+      - ./proyecto2-bd1-db/ddl.sql:/docker-entrypoint-initdb.d/001_ddl.sql:ro
+      - ./proyecto2-bd1-db/seed.sql:/docker-entrypoint-initdb.d/002_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-proy2} -d ${POSTGRES_DB:-proyecto2_bd}"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+
+  backend:
+    build:
+      context: ./proyecto2-bd1-bck
+    container_name: atelier-formal-backend
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-proyecto2_bd}
+      POSTGRES_USER: ${POSTGRES_USER:-proy2}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      DATABASE_URL: postgresql://${POSTGRES_USER:-proy2}:${POSTGRES_PASSWORD:-secret}@db:5432/${POSTGRES_DB:-proyecto2_bd}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./proyecto2-bd1-frt
+    container_name: atelier-formal-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      - backend
+
+volumes:
+  atelier_formal_data:
