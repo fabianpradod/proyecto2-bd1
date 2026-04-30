@@ -1,0 +1,1208 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Atelier Formal</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #20242c;
+        --muted: #687080;
+        --line: #d9dee7;
+        --paper: #f7f5f0;
+        --panel: #ffffff;
+        --burgundy: #8b1e3f;
+        --teal: #0f766e;
+        --gold: #b5852d;
+        --danger: #b42318;
+        --shadow: 0 16px 42px rgba(32, 36, 44, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        letter-spacing: 0;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button,
+      .button-link {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 12px;
+        color: var(--ink);
+        background: #fff;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      button:hover,
+      .button-link:hover {
+        border-color: var(--burgundy);
+      }
+
+      button.primary,
+      .button-link.primary {
+        color: #fff;
+        border-color: var(--burgundy);
+        background: var(--burgundy);
+      }
+
+      button.secondary {
+        color: #fff;
+        border-color: var(--teal);
+        background: var(--teal);
+      }
+
+      button.danger {
+        color: #fff;
+        border-color: var(--danger);
+        background: var(--danger);
+      }
+
+      button.ghost {
+        background: transparent;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: grid;
+        grid-template-columns: minmax(160px, 220px) 1fr;
+        gap: 16px;
+        align-items: center;
+        padding: 14px 24px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(247, 245, 240, 0.96);
+        backdrop-filter: blur(12px);
+      }
+
+      .brand {
+        display: grid;
+      }
+
+      .brand strong {
+        font-size: 20px;
+      }
+
+      .nav {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+      }
+
+      .nav button {
+        background: transparent;
+      }
+
+      .nav button.active {
+        color: #fff;
+        border-color: var(--ink);
+        background: var(--ink);
+      }
+
+      main {
+        width: min(1440px, 100%);
+        margin: 0 auto;
+        padding: 22px 24px 42px;
+      }
+
+      .view {
+        display: none;
+      }
+
+      .view.active {
+        display: grid;
+        gap: 18px;
+      }
+
+      .page-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 16px;
+      }
+
+      .page-head h1 {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.1;
+      }
+
+      .page-head p {
+        margin: 6px 0 0;
+        color: var(--muted);
+      }
+
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 20;
+        display: none;
+        width: min(360px, calc(100vw - 32px));
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--gold);
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #fff;
+        box-shadow: var(--shadow);
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      .toast.error {
+        border-left-color: var(--danger);
+      }
+
+      .toast.success {
+        border-left-color: var(--teal);
+      }
+
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(150px, 1fr));
+        gap: 12px;
+      }
+
+      .kpi,
+      .panel,
+      .product-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      .kpi {
+        min-height: 94px;
+        padding: 16px;
+      }
+
+      .kpi span {
+        display: block;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .kpi strong {
+        display: block;
+        margin-top: 10px;
+        font-size: 24px;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: minmax(320px, 430px) 1fr;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(260px, 1fr));
+        gap: 18px;
+      }
+
+      .panel {
+        padding: 16px;
+        overflow: hidden;
+      }
+
+      .panel h2 {
+        margin: 0 0 14px;
+        font-size: 18px;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .field-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .field-grid .wide {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 10px;
+        color: var(--ink);
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 82px;
+        resize: vertical;
+      }
+
+      .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 9px;
+        text-align: left;
+        vertical-align: top;
+        font-size: 14px;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      td.actions {
+        display: flex;
+        gap: 8px;
+        min-width: 190px;
+      }
+
+      .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(210px, 1fr));
+        gap: 14px;
+      }
+
+      .product-card {
+        overflow: hidden;
+      }
+
+      .product-card img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        background: #e8e2d8;
+      }
+
+      .product-card div {
+        padding: 12px;
+      }
+
+      .product-card h3 {
+        margin: 0;
+        min-height: 44px;
+        font-size: 16px;
+        line-height: 1.35;
+      }
+
+      .product-card p {
+        margin: 8px 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .price {
+        color: var(--burgundy);
+        font-weight: 800;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        border-radius: 999px;
+        padding: 3px 9px;
+        color: #fff;
+        background: var(--teal);
+        font-size: 12px;
+      }
+
+      .badge.off {
+        background: var(--muted);
+      }
+
+      .sale-lines {
+        display: grid;
+        gap: 8px;
+        margin: 12px 0;
+      }
+
+      .sale-line {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px;
+        background: #fff;
+      }
+
+      .empty {
+        color: var(--muted);
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        padding: 18px;
+        background: #fff;
+      }
+
+      @media (max-width: 1100px) {
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+
+        .kpis,
+        .catalog-grid,
+        .grid-3 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .topbar,
+        main {
+          padding-left: 14px;
+          padding-right: 14px;
+        }
+
+        .page-head {
+          display: grid;
+          align-items: start;
+        }
+
+        .kpis,
+        .catalog-grid,
+        .grid-3,
+        .field-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .sale-line {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <strong>Atelier Formal</strong>
+      </div>
+      <nav class="nav" aria-label="Vistas">
+        <button class="active" data-view-button="catalogo">Catalogo</button>
+        <button data-view-button="productos">Productos</button>
+        <button data-view-button="categorias">Categorias</button>
+        <button data-view-button="ventas">Ventas</button>
+        <button data-view-button="reportes">Analitica</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="view active" id="catalogo">
+        <div class="page-head">
+          <h1>Catalogo</h1>
+          <button class="secondary" id="refresh-dashboard">Actualizar</button>
+        </div>
+
+        <div class="kpis" id="kpis"></div>
+
+        <div class="panel">
+          <h2>Prendas destacadas</h2>
+          <div class="catalog-grid" id="catalog-grid"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Ventas recientes</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Venta</th>
+                  <th>Fecha</th>
+                  <th>Cliente</th>
+                  <th>Canal</th>
+                  <th>Empleado</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="recent-sales-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="productos">
+        <div class="page-head">
+          <h1>Gestion de productos</h1>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h2 id="product-form-title">Nuevo producto</h2>
+            <form id="product-form" class="field-grid">
+              <input type="hidden" id="product-id">
+              <label>SKU
+                <input id="product-sku" required maxlength="40" placeholder="AF-NUEVO-001">
+              </label>
+              <label>Nombre
+                <input id="product-name" required maxlength="150" placeholder="Saco azul formal">
+              </label>
+              <label class="wide">Descripcion
+                <textarea id="product-description" required placeholder="Tela, corte y acabado"></textarea>
+              </label>
+              <label>Precio Q
+                <input id="product-price" required type="number" min="0.01" step="0.01">
+              </label>
+              <label>Stock
+                <input id="product-stock" required type="number" min="0" step="1">
+              </label>
+              <label>Talla
+                <input id="product-size" required maxlength="20">
+              </label>
+              <label>Color
+                <input id="product-color" required maxlength="60">
+              </label>
+              <label>Categoria
+                <select id="product-category" required></select>
+              </label>
+              <label>Proveedor
+                <select id="product-provider" required></select>
+              </label>
+              <label class="wide">Imagen
+                <select id="product-image">
+                  <option value="/assets/traje-negro.jpg">Traje formal</option>
+                  <option value="/assets/vestido-formal.jpg">Vestido formal</option>
+                  <option value="/assets/camisa-corbata.jpg">Camisa y corbata</option>
+                  <option value="/assets/zapatos-oxford.jpg">Zapatos oxford</option>
+                  <option value="/assets/pajarita.jpg">Pajarita</option>
+                  <option value="/assets/mancuernillas.jpg">Mancuernillas</option>
+                </select>
+              </label>
+              <label>Activo
+                <select id="product-active">
+                  <option value="true">Si</option>
+                  <option value="false">No</option>
+                </select>
+              </label>
+              <div class="toolbar wide">
+                <button class="primary" type="submit">Guardar producto</button>
+                <button class="ghost" type="button" id="reset-product">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h2>Inventario</h2>
+            <div class="toolbar">
+              <input id="product-search" placeholder="Buscar por nombre o SKU">
+              <select id="product-filter-category"></select>
+              <button id="product-search-button">Filtrar</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>SKU</th>
+                    <th>Producto</th>
+                    <th>Categoria</th>
+                    <th>Stock</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="products-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="categorias">
+        <div class="page-head">
+          <h1>Gestion de categorias</h1>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h2 id="category-form-title">Nueva categoria</h2>
+            <form id="category-form" class="field-grid">
+              <input type="hidden" id="category-id">
+              <label class="wide">Nombre
+                <input id="category-name" required maxlength="100">
+              </label>
+              <label class="wide">Descripcion
+                <textarea id="category-description" required></textarea>
+              </label>
+              <label>Activo
+                <select id="category-active">
+                  <option value="true">Si</option>
+                  <option value="false">No</option>
+                </select>
+              </label>
+              <div class="toolbar wide">
+                <button class="primary" type="submit">Guardar categoria</button>
+                <button class="ghost" type="button" id="reset-category">Limpiar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h2>Categorias</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Productos</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="categories-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="ventas">
+        <div class="page-head">
+          <h1>Registro de venta</h1>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <h2>Datos de cliente</h2>
+            <form id="sale-form" class="field-grid">
+              <label>Cliente
+                <input id="sale-customer" required placeholder="Consumidor final">
+              </label>
+              <label>NIT
+                <input id="sale-nit" required value="CF">
+              </label>
+              <label>Canal
+                <select id="sale-channel">
+                  <option value="tienda">Tienda</option>
+                  <option value="web">Web</option>
+                  <option value="telefono">Telefono</option>
+                </select>
+              </label>
+              <label>Empleado
+                <select id="sale-employee" required></select>
+              </label>
+              <label class="wide">Producto
+                <select id="sale-product"></select>
+              </label>
+              <label>Cantidad
+                <input id="sale-quantity" type="number" min="1" step="1" value="1">
+              </label>
+              <div class="toolbar">
+                <button class="secondary" type="button" id="add-sale-line">Agregar linea</button>
+              </div>
+              <div class="wide sale-lines" id="sale-lines"></div>
+              <div class="toolbar wide">
+                <button class="primary" type="submit">Registrar venta</button>
+                <button class="ghost" type="button" id="clear-sale">Vaciar</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel">
+            <h2>Resumen de venta</h2>
+            <div class="kpis" style="grid-template-columns: repeat(2, minmax(150px, 1fr));">
+              <div class="kpi">
+                <span>Lineas</span>
+                <strong id="sale-line-count">0</strong>
+              </div>
+              <div class="kpi">
+                <span>Total estimado</span>
+                <strong id="sale-total">Q0.00</strong>
+              </div>
+            </div>
+            <div class="empty" id="sale-result" hidden></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="reportes">
+        <div class="page-head">
+          <h1>Analitica comercial</h1>
+          <a class="button-link primary" id="csv-link" href="#" target="_blank" rel="noreferrer">Exportar CSV</a>
+        </div>
+
+        <div class="grid-3">
+          <div class="panel">
+            <h2>Resumen de ventas por categoria</h2>
+            <div class="table-wrap" id="category-performance-table"></div>
+          </div>
+          <div class="panel">
+            <h2>Top productos</h2>
+            <div class="table-wrap" id="top-products-table"></div>
+          </div>
+          <div class="panel">
+            <h2>Reposicion sugerida</h2>
+            <div class="table-wrap" id="reorder-table"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Productos sin ventas</h2>
+          <div class="table-wrap" id="unsold-table"></div>
+        </div>
+      </section>
+    </main>
+    <div class="toast" id="status" role="status" aria-live="polite"></div>
+
+    <script>
+      const API_BASE = localStorage.getItem("atelier_api_base") || "http://localhost:8000";
+      const state = {
+        categories: [],
+        suppliers: [],
+        employees: [],
+        products: [],
+        saleLines: []
+      };
+      let statusTimer;
+
+      const assets = [
+        "/assets/traje-negro.jpg",
+        "/assets/vestido-formal.jpg",
+        "/assets/camisa-corbata.jpg",
+        "/assets/zapatos-oxford.jpg",
+        "/assets/pajarita.jpg",
+        "/assets/mancuernillas.jpg"
+      ];
+
+      const $ = (selector) => document.querySelector(selector);
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function money(value) {
+        return `Q${Number(value || 0).toLocaleString("es-GT", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        })}`;
+      }
+
+      function shortDate(value) {
+        if (!value) return "";
+        return new Date(value).toLocaleString("es-GT", {
+          dateStyle: "medium",
+          timeStyle: "short"
+        });
+      }
+
+      function setStatus(message, type = "") {
+        const box = $("#status");
+        clearTimeout(statusTimer);
+        if (!message) {
+          box.className = "toast";
+          box.textContent = "";
+          return;
+        }
+        box.textContent = message;
+        box.className = `toast show ${type}`.trim();
+        if (type === "success") {
+          statusTimer = setTimeout(() => setStatus(""), 2800);
+        }
+      }
+
+      async function api(path, options = {}) {
+        const response = await fetch(`${API_BASE}${path}`, {
+          headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+          ...options
+        });
+
+        if (!response.ok) {
+          let detail = `Error HTTP ${response.status}`;
+          try {
+            const payload = await response.json();
+            detail = payload.detail || detail;
+          } catch (_) {
+            detail = await response.text();
+          }
+          throw new Error(detail);
+        }
+
+        const type = response.headers.get("content-type") || "";
+        return type.includes("application/json") ? response.json() : response.text();
+      }
+
+      function showView(name) {
+        document.querySelectorAll(".view").forEach((view) => {
+          view.classList.toggle("active", view.id === name);
+        });
+        document.querySelectorAll("[data-view-button]").forEach((button) => {
+          button.classList.toggle("active", button.dataset.viewButton === name);
+        });
+      }
+
+      function optionList(rows, valueKey, labelFn, selectedValue = "") {
+        return rows.map((row) => {
+          const value = row[valueKey];
+          const selected = String(value) === String(selectedValue) ? "selected" : "";
+          return `<option value="${escapeHtml(value)}" ${selected}>${escapeHtml(labelFn(row))}</option>`;
+        }).join("");
+      }
+
+      function fillSelects() {
+        const activeCategories = state.categories.filter((category) => category.activo);
+        $("#product-category").innerHTML = optionList(activeCategories, "id_categoria", (row) => row.nombre);
+        $("#product-filter-category").innerHTML = `<option value="">Todas las categorias</option>${optionList(activeCategories, "id_categoria", (row) => row.nombre)}`;
+        $("#product-provider").innerHTML = optionList(state.suppliers.filter((supplier) => supplier.activo), "id_proveedor", (row) => row.nombre);
+        $("#sale-employee").innerHTML = optionList(state.employees, "id_empleado", (row) => `${row.apellido}, ${row.nombre}`);
+        $("#sale-product").innerHTML = optionList(
+          state.products.filter((product) => product.activo && product.stock > 0),
+          "id_producto",
+          (row) => `${row.sku} - ${row.nombre} (${row.stock})`
+        );
+      }
+
+      async function loadCore() {
+        const [categories, suppliers, employees, products] = await Promise.all([
+          api("/api/categories"),
+          api("/api/suppliers"),
+          api("/api/employees"),
+          api("/api/products")
+        ]);
+        state.categories = categories;
+        state.suppliers = suppliers;
+        state.employees = employees;
+        state.products = products;
+        fillSelects();
+        renderCategories();
+        renderProducts();
+        renderCatalog();
+        renderSaleLines();
+      }
+
+      async function loadDashboard() {
+        const payload = await api("/api/dashboard");
+        const stats = payload.stats || {};
+        $("#kpis").innerHTML = [
+          ["Productos activos", stats.productos_activos],
+          ["Categorias", stats.categorias_activas],
+          ["Proveedores", stats.proveedores_activos],
+          ["Ventas historicas", money(stats.ventas_historicas)],
+          ["Bajo stock", stats.productos_bajo_stock]
+        ].map(([label, value]) => `<div class="kpi"><span>${label}</span><strong>${value ?? 0}</strong></div>`).join("");
+
+        $("#recent-sales-body").innerHTML = (payload.recent_sales || []).map((row) => `
+          <tr>
+            <td>#${escapeHtml(row.id_venta)}</td>
+            <td>${escapeHtml(shortDate(row.fecha))}</td>
+            <td>${escapeHtml(row.nombre_cliente)}</td>
+            <td>${escapeHtml(row.canal)}</td>
+            <td>${escapeHtml(row.empleado)}</td>
+            <td>${money(row.total)}</td>
+          </tr>
+        `).join("");
+      }
+
+      function renderCatalog() {
+        const rows = state.products.filter((product) => product.activo).slice(0, 12);
+        $("#catalog-grid").innerHTML = rows.map((product, index) => `
+          <article class="product-card">
+            <img src="${escapeHtml(product.imagen_url || assets[index % assets.length])}" alt="${escapeHtml(product.nombre)}">
+            <div>
+              <h3>${escapeHtml(product.nombre)}</h3>
+              <p>${escapeHtml(product.categoria)} | ${escapeHtml(product.talla)} | ${escapeHtml(product.color)}</p>
+              <p class="price">${money(product.precio_unitario)}</p>
+              <span class="badge">Stock ${escapeHtml(product.stock)}</span>
+            </div>
+          </article>
+        `).join("");
+      }
+
+      function renderProducts() {
+        $("#products-body").innerHTML = state.products.map((product) => `
+          <tr>
+            <td>${escapeHtml(product.sku)}</td>
+            <td><strong>${escapeHtml(product.nombre)}</strong><br><span>${escapeHtml(product.proveedor)}</span></td>
+            <td>${escapeHtml(product.categoria)}</td>
+            <td>${escapeHtml(product.stock)}</td>
+            <td>${money(product.precio_unitario)}</td>
+            <td><span class="badge ${product.activo ? "" : "off"}">${product.activo ? "Activo" : "Inactivo"}</span></td>
+            <td class="actions">
+              <button type="button" data-edit-product="${product.id_producto}">Editar</button>
+              <button class="danger" type="button" data-delete-product="${product.id_producto}">Desactivar</button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      function renderCategories() {
+        $("#categories-body").innerHTML = state.categories.map((category) => `
+          <tr>
+            <td><strong>${escapeHtml(category.nombre)}</strong></td>
+            <td>${escapeHtml(category.descripcion)}</td>
+            <td>${escapeHtml(category.productos_activos)}</td>
+            <td><span class="badge ${category.activo ? "" : "off"}">${category.activo ? "Activa" : "Inactiva"}</span></td>
+            <td class="actions">
+              <button type="button" data-edit-category="${category.id_categoria}">Editar</button>
+              <button class="danger" type="button" data-delete-category="${category.id_categoria}">Desactivar</button>
+            </td>
+          </tr>
+        `).join("");
+      }
+
+      function resetProductForm() {
+        $("#product-form").reset();
+        $("#product-id").value = "";
+        $("#product-active").value = "true";
+        $("#product-form-title").textContent = "Nuevo producto";
+      }
+
+      function resetCategoryForm() {
+        $("#category-form").reset();
+        $("#category-id").value = "";
+        $("#category-active").value = "true";
+        $("#category-form-title").textContent = "Nueva categoria";
+      }
+
+      function productPayload() {
+        return {
+          sku: $("#product-sku").value,
+          nombre: $("#product-name").value,
+          descripcion: $("#product-description").value,
+          precio_unitario: $("#product-price").value,
+          stock: Number($("#product-stock").value),
+          talla: $("#product-size").value,
+          color: $("#product-color").value,
+          imagen_url: $("#product-image").value,
+          activo: $("#product-active").value === "true",
+          id_categoria: Number($("#product-category").value),
+          id_proveedor: Number($("#product-provider").value)
+        };
+      }
+
+      function categoryPayload() {
+        return {
+          nombre: $("#category-name").value,
+          descripcion: $("#category-description").value,
+          activo: $("#category-active").value === "true"
+        };
+      }
+
+      async function reloadProductsFromFilters() {
+        const q = $("#product-search").value.trim();
+        const category = $("#product-filter-category").value;
+        const params = new URLSearchParams();
+        if (q) params.set("q", q);
+        if (category) params.set("category_id", category);
+        state.products = await api(`/api/products${params.toString() ? `?${params}` : ""}`);
+        fillSelects();
+        renderProducts();
+        renderCatalog();
+      }
+
+      function renderSaleLines() {
+        const container = $("#sale-lines");
+        if (state.saleLines.length === 0) {
+          container.innerHTML = `<div class="empty">Agrega productos para registrar una venta.</div>`;
+        } else {
+          container.innerHTML = state.saleLines.map((line, index) => `
+            <div class="sale-line">
+              <strong>${escapeHtml(line.nombre)}</strong>
+              <span>${line.cantidad} x ${money(line.precio_unitario)}</span>
+              <button type="button" data-remove-line="${index}">Quitar</button>
+            </div>
+          `).join("");
+        }
+
+        const total = state.saleLines.reduce((sum, line) => sum + Number(line.precio_unitario) * line.cantidad, 0);
+        $("#sale-line-count").textContent = String(state.saleLines.length);
+        $("#sale-total").textContent = money(total);
+      }
+
+      function table(headers, rows, renderRow) {
+        if (!rows.length) return `<div class="empty">Sin datos para mostrar.</div>`;
+        return `
+          <table>
+            <thead><tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>
+            <tbody>${rows.map(renderRow).join("")}</tbody>
+          </table>
+        `;
+      }
+
+      async function loadReports() {
+        const [categoryPerformance, topProducts, reorder, unsold] = await Promise.all([
+          api("/api/reports/category-performance"),
+          api("/api/reports/top-products"),
+          api("/api/reports/reorder-suggestions"),
+          api("/api/reports/unsold-products")
+        ]);
+
+        $("#category-performance-table").innerHTML = table(
+          ["Categoria", "Ventas", "Unidades", "Total"],
+          categoryPerformance,
+          (row) => `<tr><td>${escapeHtml(row.categoria)}</td><td>${row.ventas}</td><td>${row.unidades}</td><td>${money(row.total)}</td></tr>`
+        );
+        $("#top-products-table").innerHTML = table(
+          ["#", "Producto", "Unidades", "Total"],
+          topProducts,
+          (row) => `<tr><td>${row.posicion}</td><td>${escapeHtml(row.nombre)}</td><td>${row.unidades}</td><td>${money(row.total)}</td></tr>`
+        );
+        $("#reorder-table").innerHTML = table(
+          ["SKU", "Producto", "Stock", "Promedio"],
+          reorder,
+          (row) => `<tr><td>${escapeHtml(row.sku)}</td><td>${escapeHtml(row.nombre)}</td><td>${row.stock}</td><td>${row.stock_promedio_categoria}</td></tr>`
+        );
+        $("#unsold-table").innerHTML = table(
+          ["SKU", "Producto", "Categoria", "Stock", "Precio"],
+          unsold,
+          (row) => `<tr><td>${escapeHtml(row.sku)}</td><td>${escapeHtml(row.nombre)}</td><td>${escapeHtml(row.categoria)}</td><td>${row.stock}</td><td>${money(row.precio_unitario)}</td></tr>`
+        );
+      }
+
+      document.querySelectorAll("[data-view-button]").forEach((button) => {
+        button.addEventListener("click", () => showView(button.dataset.viewButton));
+      });
+
+      $("#refresh-dashboard").addEventListener("click", async () => {
+        try {
+          await Promise.all([loadCore(), loadDashboard(), loadReports()]);
+          setStatus("Datos actualizados.", "success");
+        } catch (error) {
+          setStatus(error.message, "error");
+        }
+      });
+
+      $("#product-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const id = $("#product-id").value;
+        try {
+          await api(`/api/products${id ? `/${id}` : ""}`, {
+            method: id ? "PUT" : "POST",
+            body: JSON.stringify(productPayload())
+          });
+          resetProductForm();
+          await Promise.all([reloadProductsFromFilters(), loadDashboard(), loadReports()]);
+          setStatus("Producto guardado correctamente.", "success");
+        } catch (error) {
+          setStatus(error.message, "error");
+        }
+      });
+
+      $("#reset-product").addEventListener("click", resetProductForm);
+      $("#product-search-button").addEventListener("click", async () => {
+        try {
+          await reloadProductsFromFilters();
+          setStatus("Inventario filtrado.", "success");
+        } catch (error) {
+          setStatus(error.message, "error");
+        }
+      });
+
+      $("#products-body").addEventListener("click", async (event) => {
+        const editId = event.target.dataset.editProduct;
+        const deleteId = event.target.dataset.deleteProduct;
+        if (editId) {
+          const product = state.products.find((row) => String(row.id_producto) === String(editId));
+          if (!product) return;
+          $("#product-form-title").textContent = `Editar ${product.sku}`;
+          $("#product-id").value = product.id_producto;
+          $("#product-sku").value = product.sku;
+          $("#product-name").value = product.nombre;
+          $("#product-description").value = product.descripcion;
+          $("#product-price").value = product.precio_unitario;
+          $("#product-stock").value = product.stock;
+          $("#product-size").value = product.talla;
+          $("#product-color").value = product.color;
+          $("#product-image").value = product.imagen_url || assets[0];
+          $("#product-category").value = product.id_categoria;
+          $("#product-provider").value = product.id_proveedor;
+          $("#product-active").value = String(product.activo);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        if (deleteId && confirm("Desactivar este producto?")) {
+          try {
+            await api(`/api/products/${deleteId}`, { method: "DELETE" });
+            await Promise.all([reloadProductsFromFilters(), loadDashboard(), loadReports()]);
+            setStatus("Producto desactivado.", "success");
+          } catch (error) {
+            setStatus(error.message, "error");
+          }
+        }
+      });
+
+      $("#category-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const id = $("#category-id").value;
+        try {
+          await api(`/api/categories${id ? `/${id}` : ""}`, {
+            method: id ? "PUT" : "POST",
+            body: JSON.stringify(categoryPayload())
+          });
+          resetCategoryForm();
+          await Promise.all([loadCore(), loadDashboard(), loadReports()]);
+          setStatus("Categoria guardada correctamente.", "success");
+        } catch (error) {
+          setStatus(error.message, "error");
+        }
+      });
+
+      $("#reset-category").addEventListener("click", resetCategoryForm);
+      $("#categories-body").addEventListener("click", async (event) => {
+        const editId = event.target.dataset.editCategory;
+        const deleteId = event.target.dataset.deleteCategory;
+        if (editId) {
+          const category = state.categories.find((row) => String(row.id_categoria) === String(editId));
+          if (!category) return;
+          $("#category-form-title").textContent = `Editar ${category.nombre}`;
+          $("#category-id").value = category.id_categoria;
+          $("#category-name").value = category.nombre;
+          $("#category-description").value = category.descripcion;
+          $("#category-active").value = String(category.activo);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        if (deleteId && confirm("Desactivar esta categoria?")) {
+          try {
+            await api(`/api/categories/${deleteId}`, { method: "DELETE" });
+            await Promise.all([loadCore(), loadDashboard(), loadReports()]);
+            setStatus("Categoria desactivada.", "success");
+          } catch (error) {
+            setStatus(error.message, "error");
+          }
+        }
+      });
+
+      $("#add-sale-line").addEventListener("click", () => {
+        const product = state.products.find((row) => String(row.id_producto) === $("#sale-product").value);
+        const quantity = Number($("#sale-quantity").value);
+        if (!product || quantity < 1) {
+          setStatus("Selecciona un producto y cantidad valida.", "error");
+          return;
+        }
+        if (quantity > product.stock) {
+          setStatus(`Stock insuficiente. Disponible: ${product.stock}.`, "error");
+          return;
+        }
+        state.saleLines.push({
+          id_producto: product.id_producto,
+          nombre: product.nombre,
+          cantidad: quantity,
+          precio_unitario: product.precio_unitario
+        });
+        renderSaleLines();
+      });
+
+      $("#sale-lines").addEventListener("click", (event) => {
+        const index = event.target.dataset.removeLine;
+        if (index !== undefined) {
+          state.saleLines.splice(Number(index), 1);
+          renderSaleLines();
+        }
+      });
+
+      $("#clear-sale").addEventListener("click", () => {
+        state.saleLines = [];
+        renderSaleLines();
+      });
+
+      $("#sale-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        if (state.saleLines.length === 0) {
+          setStatus("Agrega al menos una linea de venta.", "error");
+          return;
+        }
+
+        try {
+          const payload = {
+            nombre_cliente: $("#sale-customer").value,
+            nit_cliente: $("#sale-nit").value,
+            canal: $("#sale-channel").value,
+            id_empleado: Number($("#sale-employee").value),
+            detalles: state.saleLines.map((line) => ({
+              id_producto: line.id_producto,
+              cantidad: line.cantidad
+            }))
+          };
+          const sale = await api("/api/sales", {
+            method: "POST",
+            body: JSON.stringify(payload)
+          });
+          $("#sale-result").textContent = `Venta #${sale.id_venta} registrada por ${money(sale.total)}.`;
+          $("#sale-result").hidden = false;
+          state.saleLines = [];
+          $("#sale-form").reset();
+          $("#sale-nit").value = "CF";
+          await Promise.all([loadCore(), loadDashboard(), loadReports()]);
+          setStatus("Venta registrada.", "success");
+        } catch (error) {
+          setStatus(error.message, "error");
+        }
+      });
+
+      async function boot() {
+        $("#csv-link").href = `${API_BASE}/api/reports/category-performance.csv`;
+        try {
+          await Promise.all([loadCore(), loadDashboard(), loadReports()]);
+        } catch (error) {
+          setStatus(`No se pudo cargar la informacion: ${error.message}`, "error");
+        }
+      }
+
+      boot();
+    </script>
+  </body>
+</html>
